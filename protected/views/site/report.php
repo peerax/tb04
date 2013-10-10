@@ -10,6 +10,8 @@ if (isset($res)):
     echo 'ผลการตรวจระหว่างวันที่  '.Yii::app()->controller->DateThai($sdate).'  ถึงวันที่  ' . Yii::app()->controller->DateThai($edate);
     echo '<br>จำนวนรายที่ตรวจ ' . $countper .' ราย ('.$count.' ครั้ง)';
     echo '<br>จำนวนรายที่Positive ' . $countpos.' ราย ('.$cpos.' ครั้ง)';
+    echo '<br>จำนวนPositive รายใหม่ ' . $countposnew.' ราย';
+    echo '<br>จำนวนPositive รายเก่า' . $countposold.' ราย';
     $this->widget('zii.widgets.grid.CGridView', array(
         'dataProvider' => $dataProvider,
         'id' => 's-grid',

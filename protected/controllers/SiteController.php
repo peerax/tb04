@@ -51,35 +51,43 @@ class SiteController extends Controller {
     }
 
     public function actionRepAll() {
-        if(isset($_POST['start_date'])):
-        $sdate = SiteController::ConDate2DB($_POST['start_date']);
-        $edate = SiteController::ConDate2DB($_POST['end_date']);
-        endif;
-        
-        $criteria=new CDbCriteria();
-        $criteria->addBetweenCondition('o_date',$sdate,$edate);
-        if (isset($_POST['Posi'])):
-            $res = 'posi';
-        $criteria->condition('afb_res like "pos%"');
-        $sql.= ' AND afb_res like "POS%"';
-        else:
-            $res = 'false';
-        $countpos = '';
+        if (isset($_POST['start_date'])):
+            $sdate = SiteController::ConDate2DB($_POST['start_date']);
+            $edate = SiteController::ConDate2DB($_POST['end_date']);
         endif;
 
-        
-        $count=Yii::app()->db->createCommand('SELECT count(*) FROM tb_04 WHERE tb_04.o_date BETWEEN "'.$sdate.'" AND "'.$edate.'" ')->queryScalar();
-        $countper=Yii::app()->db->createCommand('SELECT COUNT(distinct(hn)) FROM tb_04 WHERE tb_04.o_date BETWEEN "'.$sdate.'" AND "'.$edate.'" ')->queryScalar();
-                $countpos=Yii::app()->db->createCommand('SELECT COUNT(distinct(hn)) 
+        $criteria = new CDbCriteria();
+        $criteria->addBetweenCondition('o_date', $sdate, $edate);
+        if (isset($_POST['Posi'])):
+            $res = 'posi';
+            $criteria->condition('afb_res like "pos%"');
+            $sql.= ' AND afb_res like "POS%"';
+        else:
+            $res = 'false';
+            $countpos = '';
+        endif;
+
+
+        $count = Yii::app()->db->createCommand('SELECT count(*) FROM tb_04 WHERE tb_04.o_date BETWEEN "' . $sdate . '" AND "' . $edate . '" ')->queryScalar();
+        $countper = Yii::app()->db->createCommand('SELECT COUNT(distinct(hn)) FROM tb_04 WHERE tb_04.o_date BETWEEN "' . $sdate . '" AND "' . $edate . '" ')->queryScalar();
+        $countpos = Yii::app()->db->createCommand('SELECT COUNT(distinct(hn)) 
             FROM tb_04 
-            WHERE tb_04.o_date BETWEEN "'.$sdate.'" AND "'.$edate.'" '
-                .' AND afb_res like "POSITIVE%"')->queryScalar();
-        $cpos=Yii::app()->db->createCommand('SELECT COUNT(*) 
+            WHERE tb_04.o_date BETWEEN "' . $sdate . '" AND "' . $edate . '" '
+                        . ' AND afb_res like "POSITIVE%"')->queryScalar();
+        $countposnew = Yii::app()->db->createCommand('SELECT COUNT(distinct(hn)) 
             FROM tb_04 
-            WHERE tb_04.o_date BETWEEN "'.$sdate.'" AND "'.$edate.'" '
-                .' AND afb_res like "POSITIVE%"')->queryScalar();
+            WHERE tb_04.o_date BETWEEN "' . $sdate . '" AND "' . $edate . '" '
+                        . ' AND n_o = "N" AND afb_res like "POSITIVE%"')->queryScalar();
+        $countposold = Yii::app()->db->createCommand('SELECT COUNT(distinct(hn)) 
+            FROM tb_04 
+            WHERE tb_04.o_date BETWEEN "' . $sdate . '" AND "' . $edate . '" '
+                        . ' AND n_o = "O" AND afb_res like "POSITIVE%"')->queryScalar();
+        $cpos = Yii::app()->db->createCommand('SELECT COUNT(*) 
+            FROM tb_04 
+            WHERE tb_04.o_date BETWEEN "' . $sdate . '" AND "' . $edate . '" '
+                        . ' AND afb_res like "POSITIVE%"')->queryScalar();
         $dataProvider = new CActiveDataProvider('Tb04', array(
-                'criteria'=>$criteria,
+            'criteria' => $criteria,
             'pagination' => array(
                 'pageSize' => 10000,
             ),
@@ -88,13 +96,15 @@ class SiteController extends Controller {
         $this->render('report', array(
             'model' => $model,
             'res' => $res,
-            'dataProvider'=>$dataProvider,
-            'countpos'=>$countpos,
-            'countper'=>$countper,
-            'count'=>$count,
-            'sdate'=>$sdate,
-            'edate'=>$edate,
-            'cpos'=>$cpos,
+            'dataProvider' => $dataProvider,
+            'countpos' => $countpos,
+            'countposnew' => $countposnew,
+            'countposold' => $countposold,
+            'countper' => $countper,
+            'count' => $count,
+            'sdate' => $sdate,
+            'edate' => $edate,
+            'cpos' => $cpos,
         ));
     }
 
